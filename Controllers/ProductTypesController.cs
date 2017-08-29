@@ -47,12 +47,12 @@ namespace Bangazon.Controllers
             /*
                 Create instance of view model
              */
-            // ProductTypeDetailViewModel model;
+            ProductTypeDetailViewModel model = new ProductTypeDetailViewModel();
 
             /*
                 Write LINQ statement to get requested product type
              */
-            IQueryable<ProductType> productType;
+            ProductType productType = context.ProductType.SingleOrDefault(p => p.ProductTypeId == type);
 
             // If product not found, return 404
             if (productType == null)
