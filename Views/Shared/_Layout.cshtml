@@ -1,3 +1,8 @@
+@using Microsoft.AspNetCore.Identity
+@using Bangazon.Models
+
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
 <!DOCTYPE html>
 <html>
 <head>
@@ -31,7 +36,10 @@
             <div class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
                     <li><a href="/types">Product Types</a></li>
-                    <li><a asp-area="" asp-controller="Products" asp-action="Create">Sell Something</a></li>                    
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                    <li><a asp-area="" asp-controller="Products" asp-action="Create">Sell Something</a></li>
+                    }                    
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>
