@@ -5,16 +5,16 @@ using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Bangazon.Data;
 
-namespace Bangazon.Migrations
+namespace BangazonAuth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20161130155421_Initial")]
-    partial class Initial
+    [Migration("20170829194103_inital")]
+    partial class inital
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .HasAnnotation("ProductVersion", "1.0.0-rtm-21431");
+                .HasAnnotation("ProductVersion", "1.0.3");
 
             modelBuilder.Entity("Bangazon.Models.ApplicationUser", b =>
                 {
@@ -25,12 +25,8 @@ namespace Bangazon.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
-
                     b.Property<string>("Email")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
 
@@ -45,10 +41,10 @@ namespace Bangazon.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd");
 
                     b.Property<string>("NormalizedEmail")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedUserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash");
 
@@ -64,7 +60,7 @@ namespace Bangazon.Migrations
                     b.Property<bool>("TwoFactorEnabled");
 
                     b.Property<string>("UserName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
@@ -78,38 +74,15 @@ namespace Bangazon.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Bangazon.Models.LineItem", b =>
-                {
-                    b.Property<int>("LineItemId")
-                        .ValueGeneratedOnAdd();
-
-                    b.Property<int>("OrderId");
-
-                    b.Property<int>("ProductId");
-
-                    b.HasKey("LineItemId");
-
-                    b.HasIndex("OrderId");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("LineItem");
-                });
-
             modelBuilder.Entity("Bangazon.Models.Order", b =>
                 {
                     b.Property<int>("OrderId")
                         .ValueGeneratedOnAdd();
 
-                    b.Property<DateTime?>("DateCompleted");
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
-
                     b.Property<int?>("PaymentTypeId");
 
-                    b.Property<string>("UserId");
+                    b.Property<string>("UserId")
+                        .IsRequired();
 
                     b.HasKey("OrderId");
 
@@ -120,6 +93,24 @@ namespace Bangazon.Migrations
                     b.ToTable("Order");
                 });
 
+            modelBuilder.Entity("Bangazon.Models.OrderProducts", b =>
+                {
+                    b.Property<int>("OrderProductsId")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<int>("OrderId");
+
+                    b.Property<int>("ProductId");
+
+                    b.HasKey("OrderProductsId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("OrderProducts");
+                });
+
             modelBuilder.Entity("Bangazon.Models.PaymentType", b =>
                 {
                     b.Property<int>("PaymentTypeId")
@@ -127,15 +118,14 @@ namespace Bangazon.Migrations
 
                     b.Property<string>("AccountNumber")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 20);
+                        .HasMaxLength(20);
 
                     b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
+                        .ValueGeneratedOnAddOrUpdate();
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 12);
+                        .HasMaxLength(12);
 
                     b.Property<string>("UserId")
                         .IsRequired();
@@ -153,20 +143,22 @@ namespace Bangazon.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAdd()
+                        .ValueGeneratedOnAddOrUpdate()
                         .HasDefaultValueSql("strftime('%Y-%m-%d %H:%M:%S')");
 
                     b.Property<string>("Description")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 255);
+                        .HasMaxLength(255);
 
                     b.Property<double>("Price");
 
                     b.Property<int>("ProductTypeId");
 
+                    b.Property<int>("Quantity");
+
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 55);
+                        .HasMaxLength(55);
 
                     b.Property<string>("UserId")
                         .IsRequired();
@@ -187,7 +179,7 @@ namespace Bangazon.Migrations
 
                     b.Property<string>("Label")
                         .IsRequired()
-                        .HasAnnotation("MaxLength", 255);
+                        .HasMaxLength(255);
 
                     b.HasKey("ProductTypeId");
 
@@ -202,10 +194,10 @@ namespace Bangazon.Migrations
                         .IsConcurrencyToken();
 
                     b.Property<string>("Name")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.Property<string>("NormalizedName")
-                        .HasAnnotation("MaxLength", 256);
+                        .HasMaxLength(256);
 
                     b.HasKey("Id");
 
@@ -301,19 +293,6 @@ namespace Bangazon.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Bangazon.Models.LineItem", b =>
-                {
-                    b.HasOne("Bangazon.Models.Order", "Order")
-                        .WithMany()
-                        .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Bangazon.Models.Product", "Product")
-                        .WithMany()
-                        .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
-                });
-
             modelBuilder.Entity("Bangazon.Models.Order", b =>
                 {
                     b.HasOne("Bangazon.Models.PaymentType", "PaymentType")
@@ -322,7 +301,21 @@ namespace Bangazon.Migrations
 
                     b.HasOne("Bangazon.Models.ApplicationUser", "User")
                         .WithMany()
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Bangazon.Models.OrderProducts", b =>
+                {
+                    b.HasOne("Bangazon.Models.Order", "Order")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Bangazon.Models.Product", "Product")
+                        .WithMany("OrderProducts")
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Bangazon.Models.PaymentType", b =>

@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Bangazon.Migrations
+namespace BangazonAuth.Migrations
 {
-    public partial class Initial : Migration
+    public partial class inital : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -15,7 +15,6 @@ namespace Bangazon.Migrations
                     Id = table.Column<string>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     ConcurrencyStamp = table.Column<string>(nullable: true),
-                    DateCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "strftime('%Y-%m-%d %H:%M:%S')"),
                     Email = table.Column<string>(maxLength: 256, nullable: true),
                     EmailConfirmed = table.Column<bool>(nullable: false),
                     FirstName = table.Column<string>(nullable: false),
@@ -85,7 +84,7 @@ namespace Bangazon.Migrations
                     PaymentTypeId = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
                     AccountNumber = table.Column<string>(maxLength: 20, nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "strftime('%Y-%m-%d %H:%M:%S')"),
+                    DateCreated = table.Column<DateTime>(nullable: false),
                     Description = table.Column<string>(maxLength: 12, nullable: false),
                     UserId = table.Column<string>(nullable: false)
                 },
@@ -151,6 +150,7 @@ namespace Bangazon.Migrations
                     Description = table.Column<string>(maxLength: 255, nullable: false),
                     Price = table.Column<double>(nullable: false),
                     ProductTypeId = table.Column<int>(nullable: false),
+                    Quantity = table.Column<int>(nullable: false),
                     Title = table.Column<string>(maxLength: 55, nullable: false),
                     UserId = table.Column<string>(nullable: false)
                 },
@@ -222,10 +222,8 @@ namespace Bangazon.Migrations
                 {
                     OrderId = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
-                    DateCompleted = table.Column<DateTime>(nullable: true),
-                    DateCreated = table.Column<DateTime>(nullable: false, defaultValueSql: "strftime('%Y-%m-%d %H:%M:%S')"),
                     PaymentTypeId = table.Column<int>(nullable: true),
-                    UserId = table.Column<string>(nullable: true)
+                    UserId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -241,29 +239,29 @@ namespace Bangazon.Migrations
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "LineItem",
+                name: "OrderProducts",
                 columns: table => new
                 {
-                    LineItemId = table.Column<int>(nullable: false)
+                    OrderProductsId = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
                     OrderId = table.Column<int>(nullable: false),
                     ProductId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_LineItem", x => x.LineItemId);
+                    table.PrimaryKey("PK_OrderProducts", x => x.OrderProductsId);
                     table.ForeignKey(
-                        name: "FK_LineItem_Order_OrderId",
+                        name: "FK_OrderProducts_Order_OrderId",
                         column: x => x.OrderId,
                         principalTable: "Order",
                         principalColumn: "OrderId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_LineItem_Product_ProductId",
+                        name: "FK_OrderProducts_Product_ProductId",
                         column: x => x.ProductId,
                         principalTable: "Product",
                         principalColumn: "ProductId",
@@ -282,16 +280,6 @@ namespace Bangazon.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_LineItem_OrderId",
-                table: "LineItem",
-                column: "OrderId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_LineItem_ProductId",
-                table: "LineItem",
-                column: "ProductId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Order_PaymentTypeId",
                 table: "Order",
                 column: "PaymentTypeId");
@@ -300,6 +288,16 @@ namespace Bangazon.Migrations
                 name: "IX_Order_UserId",
                 table: "Order",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProducts_OrderId",
+                table: "OrderProducts",
+                column: "OrderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderProducts_ProductId",
+                table: "OrderProducts",
+                column: "ProductId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PaymentType_UserId",
@@ -350,7 +348,7 @@ namespace Bangazon.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "LineItem");
+                name: "OrderProducts");
 
             migrationBuilder.DropTable(
                 name: "AspNetRoleClaims");
