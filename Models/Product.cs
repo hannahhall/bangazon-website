@@ -11,7 +11,7 @@ namespace Bangazon.Models
     [Key]
     public int ProductId {get;set;}
 
-    [NotMapped]
+    [Required]
     public int Quantity { get; set; }
 
 
@@ -40,6 +40,8 @@ namespace Bangazon.Models
     
     [Display(Name="Category")]
     public ProductType ProductType { get; set; }
+
+    public ICollection<OrderProducts> OrderProducts { get; set; }
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {

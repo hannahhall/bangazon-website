@@ -21,5 +21,7 @@ namespace Bangazon.Models
         public string StreetAddress { get; set; }
         
         public ICollection<Product> Products;
+
+        public ICollection<Order> Orders;
     }
 }
