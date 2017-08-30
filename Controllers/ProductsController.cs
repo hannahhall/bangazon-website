@@ -103,6 +103,42 @@ namespace Bangazon.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Purchase(int? id)
+        {
+            Product product = await _context.Product.SingleOrDefaultAsync(p => p.ProductId == id);
+
+            return View(product);
+        }
+
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Purchase(ProductPurchaseViewModel productVM)
+        {
+            ApplicationUser user = await GetCurrentUserAsync();
+            Product product = await _context.Product.SingleOrDefaultAsync(p => p.ProductId == productVM.ProductId);
+            var currentOrder = await _context.Order.SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+            if (currentOrder == null)
+            {
+                currentOrder = new Order();
+                currentOrder.User = user;
+                _context.Add(currentOrder);
+                await _context.SaveChangesAsync();
+            }
+            OrderProducts orderProduct = new OrderProducts()
+            {
+                OrderId = currentOrder.OrderId,
+                ProductId = product.ProductId
+            };
+            _context.Add(orderProduct);
+            await _context.SaveChangesAsync();
+            
+            return RedirectToAction("Index", "Order");
+        }        
+
         public async Task<IActionResult> Types()
         {
             var model = new ProductTypesViewModel();

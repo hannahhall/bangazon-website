@@ -1,0 +1,11 @@
+@model Bangazon.Models.Product
+
+@{
+    ViewData["Title"] = "Add to Cart";
+}
+
+<h3>Add @Html.DisplayFor(model => model.Title) to cart?</h3>
+<form asp-action="Purchase">
+    <input type="hidden" asp-for="ProductId" />
+    <input type="submit" value="Save" class="btn btn-default" />
+</form>
