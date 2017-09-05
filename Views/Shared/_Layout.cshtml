@@ -39,7 +39,10 @@
                     @if (SignInManager.IsSignedIn(User))
                     {
                     <li><a asp-area="" asp-controller="Products" asp-action="Create">Sell Something</a></li>
-                    }                    
+                    }
+                    <li>
+                        @await Html.PartialAsync("_SearchPartial")                    
+                    </li>
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>

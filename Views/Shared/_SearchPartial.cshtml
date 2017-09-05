@@ -1,0 +1,17 @@
+@using(Html.BeginForm("Search","Products", FormMethod.Get, new {@class="navbar-form"}))
+{
+    <div class="form-group" style="color: #9d9d9d">
+        <input type="text" name="query" class="form-control" placeholder="Search by delivery location or product"/>   
+        <div class="checkbox">
+            <label for="location">Location</label>
+            <input type="radio" id="location" name="search" value="location" />
+        </div>
+        <div class="checkbox">
+            <label for="product">Product</label>
+            <input type="radio" name="search" id="product" value="product" />        
+        </div>
+        <input type="submit" value="Search" class="btn btn-default" />
+    </div>
+   
+   
+}
