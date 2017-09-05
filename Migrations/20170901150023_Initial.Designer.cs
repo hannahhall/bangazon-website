@@ -8,8 +8,8 @@ using Bangazon.Data;
 namespace BangazonAuth.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20170829194103_inital")]
-    partial class inital
+    [Migration("20170901150023_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -116,16 +116,13 @@ namespace BangazonAuth.Migrations
                     b.Property<int>("PaymentTypeId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasMaxLength(12);
+
                     b.Property<string>("AccountNumber")
                         .IsRequired()
                         .HasMaxLength(20);
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(12);
 
                     b.Property<string>("UserId")
                         .IsRequired();

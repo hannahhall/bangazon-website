@@ -115,16 +115,13 @@ namespace BangazonAuth.Migrations
                     b.Property<int>("PaymentTypeId")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("AccountName")
+                        .IsRequired()
+                        .HasMaxLength(12);
+
                     b.Property<string>("AccountNumber")
                         .IsRequired()
                         .HasMaxLength(20);
-
-                    b.Property<DateTime>("DateCreated")
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(12);
 
                     b.Property<string>("UserId")
                         .IsRequired();

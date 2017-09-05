@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace BangazonAuth.Migrations
 {
-    public partial class inital : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -83,9 +83,8 @@ namespace BangazonAuth.Migrations
                 {
                     PaymentTypeId = table.Column<int>(nullable: false)
                         .Annotation("Autoincrement", true),
+                    AccountName = table.Column<string>(maxLength: 12, nullable: false),
                     AccountNumber = table.Column<string>(maxLength: 20, nullable: false),
-                    DateCreated = table.Column<DateTime>(nullable: false),
-                    Description = table.Column<string>(maxLength: 12, nullable: false),
                     UserId = table.Column<string>(nullable: false)
                 },
                 constraints: table =>
