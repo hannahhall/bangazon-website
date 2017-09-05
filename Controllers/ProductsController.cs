@@ -136,7 +136,7 @@ namespace Bangazon.Controllers
             _context.Add(orderProduct);
             await _context.SaveChangesAsync();
             
-            return RedirectToAction("Index", "Order");
+            return RedirectToAction("ShoppingCart", "Order");
         }        
 
         public async Task<IActionResult> Types()
