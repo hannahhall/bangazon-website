@@ -41,6 +41,10 @@ namespace Bangazon.Models
     [Display(Name="Category")]
     public ProductType ProductType { get; set; }
 
+    public bool LocalDelivery { get; set; }
+
+    public string Location { get; set; }
+
     public ICollection<OrderProducts> OrderProducts { get; set; }
     
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
