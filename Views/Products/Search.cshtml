@@ -1,0 +1,26 @@
+@model List<Bangazon.Models.Product>
+
+<h1 class="top-buffer">Search Results</h1>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Title</th>
+            <th>Description</th>
+            <th>Price</th>
+        </tr>
+    </thead>
+
+@foreach (var product in Model)
+{
+    <tr>
+        <td>
+            <a asp-action="Detail" asp-route-id="@product.ProductId">
+                @Html.DisplayFor(modelItem => product.Title)
+            </a>
+        </td>
+        <td>@Html.DisplayFor(modelItem => product.Description)</td>
+        <td>@Html.DisplayFor(modelItem => product.Price)</td>
+    </tr>
+}
+
+</table>

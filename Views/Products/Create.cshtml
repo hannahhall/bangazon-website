@@ -32,6 +32,17 @@
         </div>
         <div class="form-group">
             <div class="col-md-10">
+                <label>Local Delivery Available?</label>
+                <input asp-for="@Model.Product.LocalDelivery" class="checkbox" type="checkbox" />
+                <div class="location">
+                    <label for="Product.Location">Location Area</label>
+                    <input asp-for="@Model.Product.Location" class="form-control"/>
+                </div>
+                
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-md-10">
                 @Html.LabelFor(model => model.Product.ProductTypeId)
                 @Html.DropDownList(
                     "Product.ProductTypeId", 
@@ -54,3 +65,17 @@
 <div>
     <a asp-action="Index">Back to List</a>
 </div>
+
+@section scripts
+{
+<script type="text/javascript">
+    $(".location").hide();
+    $(".checkbox").click(function (e) {
+        if($(this).prop("checked")){
+            $(".location").show();
+        } else {
+            $(".location").hide();
+        }
+    }); 
+</script>
+}
