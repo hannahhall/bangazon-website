@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Bangazon.Data;
 using Bangazon.Models;
 using Microsoft.AspNetCore.Identity;
+using Bangazon.Models.OrderViewModels.ShoppingCart;
 
 namespace BangazonAuth.Controllers
 {
@@ -26,11 +27,44 @@ namespace BangazonAuth.Controllers
 
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
-        // GET: Order
+        // GET: Order/ *Order History
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Order.Include(o => o.PaymentType);
-            return View(await applicationDbContext.ToListAsync());
+            var user = await GetCurrentUserAsync();
+            var Orders = _context.Order
+                .Include(o => o.PaymentType)
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .Where(o => o.User == user);
+            return View(await Orders.ToListAsync());
+        }
+
+        //GET: Order/Shopping-cart
+        [HttpGet]
+        public async Task<IActionResult> ShoppingCart()
+        {
+            var user = await GetCurrentUserAsync();
+            ShoppingCartViewModel model = new ShoppingCartViewModel();
+            model.Order = new Order();            
+            try
+            {
+                model.Order = await _context.Order
+                    .Include(o => o.OrderProducts)
+                        .ThenInclude(op => op.Product)
+                    .SingleOrDefaultAsync(o => o.User == user && o.PaymentTypeId == null);
+                foreach (var op in model.Order.OrderProducts)
+                {
+                    model.Products.Add(op.Product);
+                }
+            }
+            catch(NullReferenceException)
+            {
+                model.Order = null;
+            }
+
+            
+            
+            return View(model);
         }
 
         // GET: Order/Details/5
@@ -78,19 +112,22 @@ namespace BangazonAuth.Controllers
         }
 
         // GET: Order/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Complete(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
-
-            var order = await _context.Order.SingleOrDefaultAsync(m => m.OrderId == id);
+            ApplicationUser user = await GetCurrentUserAsync();
+            var order = await _context.Order
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.Product)
+                .SingleOrDefaultAsync(o => o.OrderId == id);
             if (order == null)
             {
                 return NotFound();
             }
-            ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>(), "PaymentTypeId", "AccountNumber", order.PaymentTypeId);
+            ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>().Where(pt =>pt.User == user), "PaymentTypeId", "AccountNumber", order.PaymentTypeId);
             return View(order);
         }
 
@@ -99,13 +136,13 @@ namespace BangazonAuth.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("OrderId,PaymentTypeId")] Order order)
+        public async Task<IActionResult> Complete(int id, [Bind("OrderId,PaymentTypeId")] Order order)
         {
             if (id != order.OrderId)
             {
                 return NotFound();
             }
-
+            ModelState.Remove("User");
             if (ModelState.IsValid)
             {
                 try
