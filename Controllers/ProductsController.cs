@@ -137,6 +137,33 @@ namespace Bangazon.Controllers
             await _context.SaveChangesAsync();
             
             return RedirectToAction("ShoppingCart", "Order");
+        }
+
+        // [HttpPost]
+        public async Task<IActionResult> Search(string query, string search)
+        {
+            string lowerCaseQuery = query.ToLower();
+            List<Product> products = new List<Product>();
+            if (search == "product" || search == null)
+            {
+                products = await _context.Product
+                    .Where(p => p.Title
+                        .ToLower()
+                        .Contains(lowerCaseQuery) 
+                        || 
+                        p.Description
+                        .ToLower()
+                        .Contains(lowerCaseQuery))
+                    .ToListAsync();
+            }
+            else if (search == "location")
+            {
+                products = await _context.Product
+                    .Where(p => p.Location.ToLower() == lowerCaseQuery)
+                    .ToListAsync();
+            }
+
+            return View(products);
         }        
 
         public async Task<IActionResult> Types()
