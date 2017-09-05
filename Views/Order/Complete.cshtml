@@ -1,15 +1,16 @@
 @model Bangazon.Models.Order
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Complete Order";
 }
 
-<h2>Edit</h2>
-
-<form asp-action="Edit">
+<h2>Complete Order</h2>
+<hr />
+<h3>Order Total: $@Model.OrderProducts.Select(op => op.Product.Price).Sum()</h3>
+<form asp-action="Complete">
     <div class="form-horizontal">
-        <h4>Order</h4>
-        <hr />
+        <h4>Choose Payment</h4>
+        
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
     <input type="hidden" asp-for="OrderId" />
         <div class="form-group">
@@ -26,7 +27,7 @@
         </div>
     </div>
 </form>
-
+<a asp-controller="PaymentTypes" asp-action="Create">Add New Payment</a>
 <div>
     <a asp-action="Index">Back to List</a>
 </div>

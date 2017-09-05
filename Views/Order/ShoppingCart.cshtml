@@ -1,0 +1,47 @@
+@model Bangazon.Models.OrderViewModels.ShoppingCart.ShoppingCartViewModel
+
+@{
+    
+}
+
+<h1>Shopping Cart</h1>
+
+@if(Model.Order == null)
+{
+    <p>Add a <a asp-action="Index" asp-controller="Products">product</a> to the shopping cart first </p>
+}
+@if (Model.Order != null)
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Product
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Price
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.Products) {
+        <tr>
+            <td>@item.Title</td>
+            <td>@Model.Order.OrderProducts.Count(op=>op.ProductId == item.ProductId)</td>
+            <td>@item.Price</td>
+        </tr>
+    }
+        <tr>
+            <td><a asp-action="Complete" asp-route-id="@Model.Order.OrderId">Complete Order</a></td>
+            <td><strong>Total:</strong></td>
+            <td>@Model.Order.OrderProducts.Select(op => op.Product.Price).Sum()</td>
+        </tr>
+
+    </tbody>
+</table>
+}
+
+
