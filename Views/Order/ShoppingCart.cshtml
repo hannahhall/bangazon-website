@@ -24,14 +24,22 @@
             <th>
                 Price
             </th>
+            <th></th>
         </tr>
     </thead>
     <tbody>
     @foreach (var item in Model.Products) {
+
         <tr>
             <td>@item.Title</td>
             <td>@Model.Order.OrderProducts.Count(op=>op.ProductId == item.ProductId)</td>
             <td>@item.Price</td>
+            <td>
+                <form asp-action="DeleteFromOrder">
+                    <input type="hidden" name="id" value="@Model.Order.OrderProducts.FirstOrDefault(op => op.ProductId == item.ProductId).OrderProductsId">
+                    <input type="submit" name="" value="Delete" class="btn btn-danger">
+                </form>
+            </td>
         </tr>
     }
         <tr>

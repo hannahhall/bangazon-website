@@ -186,6 +186,14 @@ namespace BangazonAuth.Controllers
             return View(order);
         }
 
+        [HttpPost]
+        public async Task<IActionResult> DeleteFromOrder(int id)
+        {
+            var orderProduct = await _context.OrderProducts.SingleOrDefaultAsync(op => op.OrderProductsId == id);
+            _context.OrderProducts.Remove(orderProduct);
+            await _context.SaveChangesAsync();
+            return RedirectToAction("ShoppingCart");
+        }
         // POST: Order/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
