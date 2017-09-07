@@ -86,32 +86,7 @@ namespace BangazonAuth.Controllers
             return View(order);
         }
 
-        // GET: Order/Create
-        public async Task<IActionResult> Create()
-        {
-            var user = await GetCurrentUserAsync();
-            ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>().Where(p => p.User == user), "PaymentTypeId", "AccountNumber");
-            return View();
-        }
-
-        // POST: Order/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("OrderId,PaymentTypeId")] Order order)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index");
-            }
-            ViewData["PaymentTypeId"] = new SelectList(_context.Set<PaymentType>(), "PaymentTypeId", "AccountNumber", order.PaymentTypeId);
-            return View(order);
-        }
-
-        // GET: Order/Edit/5
+        // GET: Order/Complete/5
         public async Task<IActionResult> Complete(int? id)
         {
             if (id == null)
@@ -131,7 +106,7 @@ namespace BangazonAuth.Controllers
             return View(order);
         }
 
-        // POST: Order/Edit/5
+        // POST: Order/Complete/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
