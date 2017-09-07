@@ -43,9 +43,14 @@
         </tr>
     }
         <tr>
-            <td><a asp-action="Complete" asp-route-id="@Model.Order.OrderId">Complete Order</a></td>
+            <td>
+                <a asp-action="Complete" asp-route-id="@Model.Order.OrderId">Complete Order</a>
+                <br>
+                <a asp-action="Delete" asp-route-id="@Model.Order.OrderId">Delete Order</a>
+            </td>
             <td><strong>Total:</strong></td>
             <td>@Model.Order.OrderProducts.Select(op => op.Product.Price).Sum()</td>
+            <td></td>
         </tr>
 
     </tbody>
