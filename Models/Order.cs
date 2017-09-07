@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -12,5 +13,7 @@ namespace Bangazon.Models
         [Required]
         public ApplicationUser User { get; set; }
         public ICollection<OrderProducts> OrderProducts { get; set; }
+        public DateTime CreatedAt { get; set; }
+
     }
 }

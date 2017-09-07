@@ -125,6 +125,7 @@ namespace Bangazon.Controllers
             {
                 currentOrder = new Order();
                 currentOrder.User = user;
+                currentOrder.CreatedAt = DateTime.Now;
                 _context.Add(currentOrder);
                 await _context.SaveChangesAsync();
             }
