@@ -9,6 +9,8 @@ using Microsoft.Extensions.Logging;
 using Bangazon.Models;
 using Bangazon.Models.ManageViewModels;
 using Bangazon.Services;
+using Bangazon.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bangazon.Controllers
 {
@@ -21,18 +23,22 @@ namespace Bangazon.Controllers
         private readonly ISmsSender _smsSender;
         private readonly ILogger _logger;
 
+        private ApplicationDbContext _context;
+
         public ManageController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
             IEmailSender emailSender,
             ISmsSender smsSender,
-            ILoggerFactory loggerFactory)
+            ILoggerFactory loggerFactory,
+            ApplicationDbContext context)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _emailSender = emailSender;
             _smsSender = smsSender;
             _logger = loggerFactory.CreateLogger<ManageController>();
+            _context = context;
         }
 
         //
@@ -54,13 +60,18 @@ namespace Bangazon.Controllers
             {
                 return View("Error");
             }
-            var model = new IndexViewModel
+            var model = new IndexViewModel()
             {
                 HasPassword = await _userManager.HasPasswordAsync(user),
                 PhoneNumber = await _userManager.GetPhoneNumberAsync(user),
                 TwoFactor = await _userManager.GetTwoFactorEnabledAsync(user),
                 Logins = await _userManager.GetLoginsAsync(user),
-                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user)
+                BrowserRemembered = await _signInManager.IsTwoFactorClientRememberedAsync(user),
+                RecentOrder = _context.Order
+                    .Include(o => o.OrderProducts)
+                        .ThenInclude(op => op.Product)
+                    .Include(o => o.PaymentType)
+                    .OrderByDescending(o => o.CreatedAt).FirstOrDefault(o => o.User == user)
             };
             return View(model);
         }

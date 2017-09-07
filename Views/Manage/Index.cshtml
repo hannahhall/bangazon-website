@@ -7,65 +7,89 @@
 <p class="text-success">@ViewData["StatusMessage"]</p>
 
 <div>
-    <h4>Change your account settings</h4>
-    <hr />
-    <dl class="dl-horizontal">
-        <dt>Password:</dt>
-        <dd>
+    <ul class="nav nav-pills">
+        <li><h4>Change Account Settings</h4></li>
+        <li role="presentation"><a asp-controller="PaymentTypes" asp-action="Create">Add Payment Option</a></li>
+        <li role="presentation"><a asp-controller="Orders" asp-action="Index">Order History</a></li>
+        <li role="presentation"><a asp-controller="Products" asp-action="">My Products</a></li>
+        <li role="presentation"><a href="#">Change Address</a></li>
+        <li role="presentation">
             @if (Model.HasPassword)
             {
-                <a asp-controller="Manage" asp-action="ChangePassword" class="btn-bracketed">Change</a>
+                <a asp-controller="Manage" asp-action="ChangePassword">Change Password</a>
             }
             else
             {
-                <a asp-controller="Manage" asp-action="SetPassword" class="btn-bracketed">Create</a>
+                <a asp-controller="Manage" asp-action="SetPassword">Create Password</a>
             }
-        </dd>
-        <dt>External Logins:</dt>
-        <dd>
-
-            @Model.Logins.Count <a asp-controller="Manage" asp-action="ManageLogins" class="btn-bracketed">Manage</a>
-        </dd>
-        <dt>Phone Number:</dt>
-        <dd>
-            <p>
-                Phone Numbers can used as a second factor of verification in two-factor authentication.
-                See <a href="https://go.microsoft.com/fwlink/?LinkID=532713">this article</a>
-                for details on setting up this ASP.NET application to support two-factor authentication using SMS.
-            </p>
-            @*@(Model.PhoneNumber ?? "None")
+        </li>
+        <li role="presentation">
                 @if (Model.PhoneNumber != null)
                 {
-                    <br />
-                    <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn-bracketed">Change</a>
+                    <a asp-controller="Manage" asp-action="AddPhoneNumber">Change Phone Number</a>
                     <form asp-controller="Manage" asp-action="RemovePhoneNumber" method="post">
-                        [<button type="submit" class="btn-link">Remove</button>]
+                        [<button type="submit" class="btn-link">Remove Phone Number</button>]
                     </form>
                 }
                 else
                 {
-                    <a asp-controller="Manage" asp-action="AddPhoneNumber" class="btn-bracketed">Add</a>
-                }*@
-        </dd>
+                    <a asp-controller="Manage" asp-action="AddPhoneNumber">Add Phone Number</a>
+                }
+        </li>
+    </ul>
+    <hr />
+    
+</div>
+<div>
+    <h3>Your Recent Order</h3>
+    <table class="table">
+    <thead>
+        <tr>
+            <th>
+                Product
+            </th>
+            <th>
+                Quantity
+            </th>
+            <th>
+                Price
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+    @foreach (var item in Model.RecentOrder.OrderProducts) {
 
-        <dt>Two-Factor Authentication:</dt>
-        <dd>
-            <p>
-                There are no two-factor authentication providers configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532713">this article</a>
-                for setting up this application to support two-factor authentication.
-            </p>
-            @*@if (Model.TwoFactor)
+        <tr>
+            <td>@item.Product.Title</td>
+            <td>@Model.RecentOrder.OrderProducts.Count(op=>op.ProductId == item.Product.ProductId)</td>
+            <td>@item.Product.Price</td>
+            <td>
+                @if(Model.RecentOrder.PaymentTypeId == null)
                 {
-                    <form asp-controller="Manage" asp-action="DisableTwoFactorAuthentication" method="post" class="form-horizontal">
-                        Enabled <button type="submit" class="btn-link btn-bracketed">Disable</button>
-                    </form>
+                <form asp-action="DeleteFromOrder" asp-controller="Order">
+                    <input type="hidden" name="id" value="@Model.RecentOrder.OrderProducts.FirstOrDefault(op => op.ProductId == item.Product.ProductId).OrderProductsId">
+                    <input type="submit" name="" value="Delete" class="btn btn-danger">
+                </form>
                 }
-                else
+            </td>
+        </tr>
+    }
+        <tr>
+            <td>
+                @if (Model.RecentOrder.PaymentTypeId == null)
                 {
-                    <form asp-controller="Manage" asp-action="EnableTwoFactorAuthentication" method="post" class="form-horizontal">
-                        <button type="submit" class="btn-link btn-bracketed">Enable</button> Disabled
-                    </form>
-                }*@
-        </dd>
-    </dl>
+                <a asp-action="Complete" asp-controller="Order" asp-route-id="@Model.RecentOrder.OrderId">Complete Order</a>
+                }
+                else 
+                {
+                    <strong>Completed</strong>
+                }
+            </td>
+            <td><strong>Total:</strong></td>
+            <td>@Model.RecentOrder.OrderProducts.Select(op => op.Product.Price).Sum()</td>
+        </tr>
+
+    </tbody>
+</table>
 </div>
