@@ -170,20 +170,17 @@ namespace Bangazon.Controllers
         public async Task<IActionResult> Types()
         {
             var model = new ProductTypesViewModel();
+            
 
-            // Get line items grouped by product id, including count
-            var counter = from product in _context.Product
-                    group product by product.ProductTypeId into grouped
-                    select new { grouped.Key, myCount = grouped.Count() };
-
-            // Build list of Product Type instances for display in view
-            model.ProductTypes = await (from type in _context.ProductType
-                    join a in counter on type.ProductTypeId equals a.Key 
-                    select new ProductType {
-                        ProductTypeId = type.ProductTypeId,
-                        Label = type.Label, 
-                        Quantity = a.myCount 
-                    }).ToListAsync();
+            model.ProductTypes = (from product in _context.Product
+                group product by product.ProductTypeId into grouped
+                join pt in _context.ProductType
+                on grouped.Key equals pt.ProductTypeId
+                select new ProductTypeWithProducts {  
+                    Count = grouped.Count(), 
+                    ProductType = pt, 
+                    Products = grouped.Take(3).ToArray()
+                }).ToList();
 
             return View(model);
         }
